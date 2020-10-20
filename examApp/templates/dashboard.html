@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #addquotes{
+        display: flex;
+    }
+    #showquotes{
+        margin-right:600px
+    
+    }
+</style>
+<body>
+    <h1>Welcome {{user.first_name}} {{user.last_name}}!</h1>
+    <a href="/show_user/{{user.id}}">My Quotes</a>
+    <a href="/edit_user">Edit Profile</a>
+    <a href="/logout">Log Out</a>
+
+    <div id = "addquotes">
+        <div id = "showquotes">
+            {% for every_quote in all_quotes %}
+                
+                <p>Quote: {{every_quote.quote}}</p>
+                <h3>Posted by: <a href="/show_user/{{every_quote.user.id}}">{{every_quote.author}}</a></h3>
+                {% if every_quote.user.id == user.id %}
+                <a href="/destroy_quote/{{every_quote.id}}">Delete</a>
+                {% endif %}
+                {% if every_quote.likes.count > 0 %}
+                <p>likes {{ every_quote.likes.count }}</p>
+                {% endif %}
+                <a href="/like/{{every_quote.id}}/{{user.id}}">like</a>
+            {% endfor %}
+        </div>
+        <form action="/addquotes" method = "post">
+            <h2>Add a Quote!</h2>
+            {% csrf_token %}
+            <div>
+                <label for="author">Author: </label><br>
+                <input type="text" name="author"><br>
+                {% for message in messages %}
+                    {% if message.tags == 'author error' %}
+                        <p>{{message}}</p>
+                        {% endif %}
+                {% endfor %}
+            </div>
+            <div>
+                <label for="quote">Quote: </label><br>
+                <textarea name="quote"  cols="30" rows="5"></textarea>
+                {% for message in messages %}
+                    {% if message.tags == 'quote error' %}
+                        <p>{{message}}</p>
+                        {% endif %}
+                {% endfor %}
+            </div>
+            <input type="submit" value="create_quote">
+        </form>
+    </div>
+</body>
+</html>
